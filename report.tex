@@ -23,7 +23,6 @@
 
 \begin{document}
 
-%Uvodni stranka
 \thispagestyle{empty}
 \begin{center}
 \vspace*{60mm}
@@ -41,10 +40,15 @@
 \newpage
 
 
-%Vlastni zprava
 \section{Úvod}
-Toto je ukázková kostra závěrečné zprávy pro předmět VYF.
 
+Zařízení, která v dnešní době běžně používáme k zobrazování obsahu jako jsou
+obrázky nebo videa, nejsou schopny zobrazit celý dynamický rozsah světla, které
+se nachází v reálném světě. To samé platí i pro současný tisk. Z toho důvodu
+existují algoritmy, které umožňují převést scénu s velkým dynamickým rozsahem
+(HDR) na scénu se standardním dynamickým rozsahem (SDR) pro zobrazení. Tento
+proces se nazývá "tone mapping". V této zprávě popíšu, jak jsem jednu takovou
+metodu naimplementoval jako plugin do Tone Mapping Studia.
 
 
 \section{Případná sekce}
@@ -73,23 +77,42 @@ Příklad obrázku, viz obr.~\ref{fig:vdp}.
 \section{Implementace}
 Popis implementace a vizualizace jednotlivých fází výpočtu.
 
+\begin{table}[h]
+    \centering
+    \caption{This is how test images look like after applying Perceptual Quantizer.}
+    \label{tab:method-pq}
+    \begin{tabular}{lll}
+        \includegraphics[width=.3\linewidth,valign=m]{churchKhanPQ.png} &
+        \includegraphics[width=.3\linewidth,valign=m]{buildingKhanPQ.png} &
+        \includegraphics[width=.3\linewidth,valign=m]{cornell_boxKhanPQ.png} \\
+    \end{tabular}
+\end{table}
 
 \section{Výsledky}
 Nejdůležitější část -- diskuse výsledků, 
 načtené/vypozorované klady a zápory, operační složitost, ...
 Ukázkové obrázky.
 
-\begin{tabular}{lll}
-    \includegraphics[width=.3\linewidth,valign=m]{churchKhan20.png} &
-    \includegraphics[width=.3\linewidth,valign=m]{churchDrago03.png} &
-    \includegraphics[width=.3\linewidth,valign=m]{churchWard94.png} \\
-\includegraphics[width=.3\linewidth,valign=m]{buildingKhan20.png} &
-    \includegraphics[width=.3\linewidth,valign=m]{buildingDrago03.png} &
-    \includegraphics[width=.3\linewidth,valign=m]{buildingWard94.png}\\
-\includegraphics[width=.3\linewidth,valign=m]{cornell_boxKhan20.png} &
-    \includegraphics[width=.3\linewidth,valign=m]{cornell_boxDrago03.png} &
-    \includegraphics[width=.3\linewidth,valign=m]{cornell_boxWard94.png}\\
-\end{tabular}
+\begin{table}[h]
+    \centering
+    \caption{Comparison of different methods; first column is Khan20, second
+    column Drago03 and third Ward94. All with default variables that are set in
+    Tone Mapping Studio.}
+    \label{tab:method-comp}
+    \begin{tabular}{lll}
+        \includegraphics[width=.3\linewidth,valign=m]{churchKhan20.png} &
+        \includegraphics[width=.3\linewidth,valign=m]{churchDrago03.png} &
+        \includegraphics[width=.3\linewidth,valign=m]{churchWard94.png} \\
+    \includegraphics[width=.3\linewidth,valign=m]{buildingKhan20.png} &
+        \includegraphics[width=.3\linewidth,valign=m]{buildingDrago03.png} &
+        \includegraphics[width=.3\linewidth,valign=m]{buildingWard94.png}\\
+    \includegraphics[width=.3\linewidth,valign=m]{cornell_boxKhan20.png} &
+        \includegraphics[width=.3\linewidth,valign=m]{cornell_boxDrago03.png} &
+        \includegraphics[width=.3\linewidth,valign=m]{cornell_boxWard94.png}\\
+    \end{tabular}
+\end{table}
+
+Všechno jsou default values.
 
 \subsection{Uživatelská studie}
 
