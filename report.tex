@@ -6,7 +6,6 @@
 \usepackage{a4wide}
 \usepackage{url}
 \usepackage[breaklinks=true,hidelinks]{hyperref}
-
 %\usepackage[chapter]{algorithm}
 %\floatname{algorithm}{Alg.} 
 \usepackage{ifpdf}
@@ -17,6 +16,8 @@
 \usepackage[final]{graphicx}
 \DeclareGraphicsExtensions{.eps,.png,.gif,.jpg}
 \fi 
+\graphicspath{{fig/}}
+\usepackage[export]{adjustbox}
 
 
 
@@ -26,15 +27,14 @@
 \thispagestyle{empty}
 \begin{center}
 \vspace*{60mm}
-{Semestrální projekt X... -- závěrečná zpráva }\\
+{Semestrální projekt předmětu Výpočetní fotogragie -- závěrečná zpráva }\\
 \smallskip
-{\Large\bf Název zadání.....}\\
+{\Large\bf Tone Mapping: implementace algoritmu Khan20}\\
 \smallskip
-{\it Jméno Příjmení, \url{email@fit.vut.cz}}\\
+{\it Milan Tichavský, \url{xticha09@fit.vut.cz}}\\
 \vfill
 {\bf Vedoucí práce:} {\it doc. Ing. Martin Čadík, Ph.D., \url{cadik@fit.vut.cz}} 
-\hfill {Květen 2020}
-
+\hfill {Květen 2025}
 
 
 \end{center}
@@ -78,6 +78,18 @@ Popis implementace a vizualizace jednotlivých fází výpočtu.
 Nejdůležitější část -- diskuse výsledků, 
 načtené/vypozorované klady a zápory, operační složitost, ...
 Ukázkové obrázky.
+
+\begin{tabular}{lll}
+    \includegraphics[width=.3\linewidth,valign=m]{churchKhan20.png} &
+    \includegraphics[width=.3\linewidth,valign=m]{churchDrago03.png} &
+    \includegraphics[width=.3\linewidth,valign=m]{churchWard94.png} \\
+\includegraphics[width=.3\linewidth,valign=m]{buildingKhan20.png} &
+    \includegraphics[width=.3\linewidth,valign=m]{buildingDrago03.png} &
+    \includegraphics[width=.3\linewidth,valign=m]{buildingWard94.png}\\
+\includegraphics[width=.3\linewidth,valign=m]{cornell_boxKhan20.png} &
+    \includegraphics[width=.3\linewidth,valign=m]{cornell_boxDrago03.png} &
+    \includegraphics[width=.3\linewidth,valign=m]{cornell_boxWard94.png}\\
+\end{tabular}
 
 \subsection{Uživatelská studie}
 
