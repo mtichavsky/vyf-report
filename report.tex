@@ -129,7 +129,19 @@ V tabulce \ref{tab:method-comp} je vidět porovnání různých metod. Zvolil js
 metody, které ve výchozím nastavení byly schopny rozumně zobrazit všechny tři
 obrázky.
 
-\begin{table}[h]
+Jak je vidět, na všech obrázcích jsou scény krásně viditelné, bez toho aniž
+bychom museli jakkoliv přenastavovat výchozí parametry. Hlavně v tom
+se mi líbí algoritmus v porovnání s ostatními co jsem zkoušel, kde jsem
+častokrát musel parametry měnit.
+
+Subjektivně se mi víc líbí víc Drago03, protože jsou tmavé části opravdu tmavší
+a barvy mi taky přijdou lepší. Například strop kostela je pro Khan20 hodně
+v oranžovém odstínu. Na druhou stranu, světlejší barvy se hodí pro chodbu v
+druhém obrázku, kde jsou více vidět detaily. Líbí se mi i záře kolem okna
+kostela, které je jednoznačně nejsvítivějším místem celé scény.
+
+
+\begin{table}[htb]
     \centering
     \caption{Srovnání různých metod; ve sloupcích zleva do prava jsou Khan20,
     Drago03 a Ward94. Všechny s výchozíma hodnotama parametrů v Tone Mapping
@@ -147,27 +159,21 @@ obrázky.
         \includegraphics[width=.33\linewidth,valign=m]{cornell_boxWard94.png}\\
     \end{tabular}
 \end{table}
-
-
-As it can be seen, on all testing images, the scene and all details are very
-clearly visible. I think the colors are sometimes bit too light and for more
-subjectively better looking images I'd stick with Drago03, as I like the darker and maybe a bit more saturated look of them.
-On the other hand, in terms of showing the details in darker regions I think this method is
-better.
-Also, I really like I don't have to tune parameters of the algorithm for each
-scene, because the defaults work across different scenes just fine.
-
 Výpočetní složitost implementace je relativně nízká, program projde celkem 4x
 přes všechny pixely obrázku a provede relativně jednoduché výpočty v každém
 kroku. Počet průchodů by šel snížit, nicméně takto je kód podle mého názoru
 přehlednější, kdy se každá funkce mapuje na jednu fázi algoritmu.
 
-\subsection{Uživatelská studie}
-
-Poznatky získané testováním.
-
-
 \section{Závěr}
+
+V rámci projektu jsem implementoval plugin Khan20 do Tone Mapping studia a
+porovnal jeho algoritmus s ostatními metodami. Výsledky ukazují, že algoritmus
+funguje velmi dobře pro různé scény s výchozími parametry. Výstupní snímky jsou
+o něco světlejší a možná méně saturované, než bych si přál z uměleckého
+hlediska. Na druhou stranu metoda vyniká v zobrazování detailů, a to i v tmavých
+oblastech. Díky tomu jsou detaily lépe viditelné i při odlescích na monitoru
+nebo v přítomnosti silného externího osvětlení, což může být výhoda v různých
+aplikacích.
 
 \bibliographystyle{acm}
 \bibliography{report}
