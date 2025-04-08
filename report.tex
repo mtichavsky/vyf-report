@@ -49,25 +49,25 @@
 Zařízení běžně používaná k zobrazování digitálního obsahu, jako jsou monitory,
 televizory a tiskárny, nejsou schopna zobrazit celý dynamický rozsah světla
 přítomného v reálném světě. Z tohoto důvodu existují metody pro převod obrazu s
-vysokým dynamickým rozsahem (HDR) na standardní dynamický rozsah (SDR), aby bylo
-možné jej správně vizualizovat na dostupných zařízeních. Tento proces se nazývá
-"tone mapping".
+vysokým dynamickým rozsahem (HDR) na standardní dynamický rozsah (SDR), aby ho bylo
+možné správně vizualizovat na dostupných zařízeních. Tento proces se nazývá
+\emph{tone mapping}.
 
-Cílem této práce je implementace a analýza jednoho z moderních tone-mapping
-algoritmů, konkrétně metody Khan20~\cite{Khan2020}, jako pluginu do Tone Mapping
+Cílem této práce je implementace a analýza jednoho z moderních \emph{tone
+mapping} algoritmů, konkrétně metody Khan20~\cite{Khan2020}, jako pluginu do Tone Mapping
 Studia (TMS)~\cite{TMS2025}.
 
 \section{Teoretické základy}
 
-Pro pochopení tone-mappingu je nutné zmínit vlastnosti lidského vidění. Lidské
-oko dokáže adaptivně vnímat velký rozsah jasových hodnot díky nelineárnímu
-vnímání jasu a kontrastu. Algoritmy tone-mappingu se často inspirují těmito
-vlastnostmi a snaží se přizpůsobit zobrazení tak, aby výsledný obraz působil
-přirozeně.
+Pro pochopení \emph{tone mappingu} je nutné zmínit základní vlastnosti lidského
+vidění. Lidské oko dokáže adaptivně vnímat velký rozsah jasových hodnot díky
+nelineárnímu vnímání jasu a kontrastu. Toto umožnuje transformovat každou část
+spektra s jinou přesností a tím lépe využít výstupní rozsah hodnot za zachování
+co nejvíce detailů.
 
 \section{Popis algoritmu Khan20}
 
-Algoritmus Khan20 je globální tone-mapping operátor (TMO), to znamená že pro
+Algoritmus Khan20 je globální \emph{tone mapping} operátor (TMO), to znamená že pro
 transformaci je využita monotónní neklesající mapovací funkce. 
 Algoritmus je založený na transformaci obrazu pomocí funkce \textit{Perceptual
 Quantizer (PQ)} a histogramu jasu. Schéma algoritmu je vidět na obrázku
@@ -81,12 +81,13 @@ Quantizer (PQ)} a histogramu jasu. Schéma algoritmu je vidět na obrázku
   \end{center}
 \end{figure}
 
-Funkce PQ vychází se snaží simulovat vnímaní lidského oka a transformuje
-vstupní jas v rozsahu $[0, 10000]$ cd/m$^2$ na normalizovaný rozsah $[0,1]$,
-přičemž nižší jasové hodnoty mají k dispozici větší relativní rozlišení.
+Funkce PQ se snaží simulovat vnímaní lidského oka a transformuje vstupní jas v
+rozsahu $[0, 10000]$ cd/m$^2$ na normalizovaný rozsah $[0,1]$, přičemž nižší
+jasové hodnoty mají k dispozici větší relativní rozlišení.
 
-Jak je vidět v tabulce \ref{tab:method-pq}, z takto transformovaného obrázku lze
-jasně vidět celou scénu, která ale působí vybledle a má relativně nízký kontrast.
+Výstup po transformaci je ukázán v tabulce \ref{tab:method-pq}. Je vidět, že z
+takto transformovaného obrázku lze jasně vidět celou scénu, která ale působí
+vybledle a má relativně nízký kontrast.
 
 \begin{table}[htb]
     \centering
@@ -99,25 +100,39 @@ jasně vidět celou scénu, která ale působí vybledle a má relativně nízk�
     \end{tabular}
 \end{table}
 
-Z toho důvodu je nutné zkonstruovat histogram jasů, ze které je vytvořena
-vyhledávací tabulka, podle které se provádí mapování každého vstupního pixelu.
-Počet sloupců je dán parametrem $N$ (v příkazové řádce TMS lze zadat přepínačem
-\texttt{-Bins}), přičemž implicitní hodnota je 256.
+Z toho důvodu je v druhém kroku algoritmu zkonstruován histogram jasů, ze
+kterého je vytvořena vyhledávací tabulka. Podle této tabulky se poté provádí
+mapování hodnoty každého vstupního pixelu na hodnotu výstupní. Počet řádků je
+dán parametrem $N$ (v příkazové řádce TMS lze zadat přepínačem \texttt{-Bins}),
+přičemž implicitní hodnota je 256.
 
-Už dříve bylo ukázáno, že použití klasického histogramu je problematické,
-protože se může stát že malým oblastem bude přiřazeno až moc málo výsledného
-rozsahu. Například pokud máme čistě modrou oblohu zabírající velkou část snímku,
-nechceme, aby zabírala půlku výsledného rozsahu jasu. Proto je nutné
-omezit počet pixelů v každém \textit{binu} pomocí parametru k, kde
-$k/N*pixel\_count$ je maximální počet pixelů v daném sloupci. S pixelama které
-se do daného počtu nevlezou se nic neděje, akorát pro další výpočty je počet
-pixelů v daném sloupci podhonocen. V TMS lze nastavit přepínačem
+Už dříve bylo zjištěno, že použití klasického histogramu je problematické,
+protože se může stát, že malým oblastem přiřadí moc malý výsledný rozsah.
+Například pokud máme čistě modrou oblohu zabírající velkou část snímku,
+nechceme, aby zabírala půlku výsledného rozsahu jasu, protože jas všech pixelů
+bude velmi podobný. Proto je nutné
+omezit počet pixelů v každém intervalu (\textit{bin}) pomocí parametru $ k $, kde
+$k/N*pixel\_count$ je maximální počet pixelů pro každý interval. S pixelama které
+se do daného počtu nevlezou, se nic neděje, akorát pro další výpočty je počet
+pixelů v daném intervalu podhonocen. V TMS lze parametr $ k $ nastavit přepínačem
 \texttt{-Truncation} s implicitní hodnotou 5.
 
-V článku samotném není přestě uvedeno, jakým způsobem se má obraz pomocí takto
-transformovaných úrovní jasu převést do výsledného souboru. Proto jsem vstupní
-obrázek převedl do Yxy barevného prostoru, nahradil jas (luminance) nově
-vypočtenými hodnotami a tento obrázek uložil jako výsledek tone-mappingu.
+\subsection{Ukládání výsledného obrázku}
+
+Zatímco na vstupu algoritmu se předpokládá RGB obrázek, výstup algoritmu jsou
+transformované úrovně jasu pro každý pixel. V článku bohužel není uvedeno, jak
+přesně tento výstup převést do výsledného souboru. Proto jsem zvolil to co
+považuji za standardní postup, tedy obrázek na vstupu jsem převedl do Yxy barevného
+prostoru, nahradil jasovou složku nově vypočtenými hodnotami a výsledek uložil
+jako výsledek algoritmu. Pro transformaci do Yxy jsem využil vestavěných metod
+Tone Mapping Studia.
+
+\section{Implementace a výpočetní složitost}
+
+Výpočetní složitost implementace je nízká, program projde celkem 4x
+přes všechny pixely obrázku a v každém kroku provede relativně jednoduché výpočty. 
+Počet průchodů by šel snížit, nicméně takto je kód podle mého názoru
+přehlednější než nyní, kdy se každá funkce mapuje na jednu fázi algoritmu.
 
 \section{Výsledky}
 
@@ -129,22 +144,21 @@ V tabulce \ref{tab:method-comp} je vidět porovnání různých metod. Zvolil js
 metody, které ve výchozím nastavení byly schopny rozumně zobrazit všechny tři
 obrázky.
 
-Jak je vidět, na všech obrázcích jsou scény krásně viditelné, bez toho aniž
-bychom museli jakkoliv přenastavovat výchozí parametry. Hlavně v tom
-se mi líbí algoritmus v porovnání s ostatními co jsem zkoušel, kde jsem
-častokrát musel parametry měnit.
+Jak je vidět, na všech obrázcích jsou scény krásně viditelné. V žádném případě
+nebylo nutné jakkoliv přenastavovat výchozí parametry, což považuji za jednu z
+velkých výhod tohoto algoritmu oproti ostatním, které jsem zkoušel a musel
+parametry často upravovat.
 
-Subjektivně se mi víc líbí víc Drago03, protože jsou tmavé části opravdu tmavší
-a barvy mi taky přijdou lepší. Například strop kostela je pro Khan20 hodně
-v oranžovém odstínu. Na druhou stranu, světlejší barvy se hodí pro chodbu v
-druhém obrázku, kde jsou více vidět detaily. Líbí se mi i záře kolem okna
-kostela, které je jednoznačně nejsvítivějším místem celé scény.
-
+Z metod v tabulce 2 se mi subjektivně nejvíc líbí Drago03, protože tmavé části
+jsou opravdu tmavé a barvy mi taky přijdou přirozenější. Například strop kostela je 
+pro výstup Khan20 v hodně oranžovém odstínu. Na druhou stranu se světlejší barvy hodí pro chodbu
+druhého testovacího obrázku, kde jsou díky tomu lépe vidět detaily. Líbí se mi i
+záře kolem okna kostela, která je jednoznačně nejsvítivějším místem celé scény.
 
 \begin{table}[htb]
     \centering
-    \caption{Srovnání různých metod; ve sloupcích zleva do prava jsou Khan20,
-    Drago03 a Ward94. Všechny s výchozíma hodnotama parametrů v Tone Mapping
+    \caption{Srovnání různých metod; ve sloupcích zleva doprava jsou Khan20,
+    Drago03 a Ward94. Všechny spouštěny s výchozíma hodnotama parametrů v Tone Mapping
     Studiu.}
     \label{tab:method-comp}
     \begin{tabular}{lll}
@@ -159,10 +173,7 @@ kostela, které je jednoznačně nejsvítivějším místem celé scény.
         \includegraphics[width=.33\linewidth,valign=m]{cornell_boxWard94.png}\\
     \end{tabular}
 \end{table}
-Výpočetní složitost implementace je relativně nízká, program projde celkem 4x
-přes všechny pixely obrázku a provede relativně jednoduché výpočty v každém
-kroku. Počet průchodů by šel snížit, nicméně takto je kód podle mého názoru
-přehlednější, kdy se každá funkce mapuje na jednu fázi algoritmu.
+
 
 \section{Závěr}
 
