@@ -131,8 +131,15 @@ Tone Mapping Studia.
 
 Výpočetní složitost implementace je nízká, program projde celkem 4x
 přes všechny pixely obrázku a v každém kroku provede relativně jednoduché výpočty. 
-Počet průchodů by šel snížit, nicméně takto je kód podle mého názoru
-přehlednější než nyní, kdy se každá funkce mapuje na jednu fázi algoritmu.
+Počet průchodů by šel snížit, nicméně chtěl jsem nechat kód co nejpřehlednější,
+takže se každá funkce mapuje na jednu fázi algoritmu.
+
+Z hlediska optimalizací je nejzajímavější implementace vyhledávání v lookup
+tabulce, pro které jsem použil \texttt{std::upper\_bound} nad vektorem.
+Tato funkce sice pracuje s iterátory, což dělá zápis trochu komplikovanější,
+ale umožňuje nám dělat vyhledávání v LUT s \emph{log N} složistostí,
+což je za mě klíčové, vzhledem k tomu, že se tato operace provádí pro každý
+pixel obrázku.
 
 \section{Výsledky}
 
@@ -140,20 +147,6 @@ přehlednější než nyní, kdy se každá funkce mapuje na jednu fázi algorit
 % načtené/vypozorované klady a zápory, operační složitost, ...
 % Ukázkové obrázky.
 
-V tabulce \ref{tab:method-comp} je vidět porovnání různých metod. Zvolil jsem ty
-metody, které ve výchozím nastavení byly schopny rozumně zobrazit všechny tři
-obrázky.
-
-Jak je vidět, na všech obrázcích jsou scény krásně viditelné. V žádném případě
-nebylo nutné jakkoliv přenastavovat výchozí parametry, což považuji za jednu z
-velkých výhod tohoto algoritmu oproti ostatním, které jsem zkoušel a musel
-parametry často upravovat.
-
-Z metod v tabulce 2 se mi subjektivně nejvíc líbí Drago03, protože tmavé části
-jsou opravdu tmavé a barvy mi taky přijdou přirozenější. Například strop kostela je 
-pro výstup Khan20 v hodně oranžovém odstínu. Na druhou stranu se světlejší barvy hodí pro chodbu
-druhého testovacího obrázku, kde jsou díky tomu lépe vidět detaily. Líbí se mi i
-záře kolem okna kostela, která je jednoznačně nejsvítivějším místem celé scény.
 
 \begin{table}[htb]
     \centering
@@ -174,6 +167,21 @@ záře kolem okna kostela, která je jednoznačně nejsvítivějším místem ce
     \end{tabular}
 \end{table}
 
+
+V tabulce \ref{tab:method-comp} je vidět porovnání různých metod. Zvolil jsem ty
+metody, které ve výchozím nastavení byly schopny rozumně zobrazit všechny tři
+obrázky.
+
+Jak je vidět, na všech obrázcích jsou scény krásně viditelné. V žádném případě
+nebylo nutné jakkoliv přenastavovat výchozí parametry, což považuji za jednu z
+velkých výhod tohoto algoritmu oproti ostatním, které jsem zkoušel a musel
+parametry často upravovat.
+
+Z metod v tabulce 2 se mi subjektivně nejvíc líbí Drago03, protože tmavé části
+jsou opravdu tmavé a barvy mi taky přijdou přirozenější. Například strop kostela je 
+pro výstup Khan20 v hodně oranžovém odstínu. Na druhou stranu se světlejší barvy hodí pro chodbu
+druhého testovacího obrázku, kde jsou díky tomu lépe vidět detaily. Líbí se mi i
+záře kolem okna kostela, která je jednoznačně nejsvítivějším místem celé scény.
 
 \section{Závěr}
 
