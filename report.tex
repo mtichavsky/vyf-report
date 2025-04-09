@@ -67,7 +67,7 @@ co nejvíce detailů.
 
 \section{Popis algoritmu Khan20}
 
-Algoritmus Khan20 je globální \emph{tone mapping} operátor (TMO), to znamená že pro
+Algoritmus Khan20 je globální \emph{tone mapping} operátor (TMO), to znamená, že pro
 transformaci je využita monotónní neklesající mapovací funkce. 
 Algoritmus je založený na transformaci obrazu pomocí funkce \textit{Perceptual
 Quantizer (PQ)} a histogramu jasu. Schéma algoritmu je vidět na obrázku
@@ -102,17 +102,18 @@ vybledle a má relativně nízký kontrast.
 
 Z toho důvodu je v druhém kroku algoritmu zkonstruován histogram jasů, ze
 kterého je vytvořena vyhledávací tabulka. Podle této tabulky se poté provádí
-mapování hodnoty každého vstupního pixelu na hodnotu výstupní. Počet řádků je
-dán parametrem $N$ (v příkazové řádce TMS lze zadat přepínačem \texttt{-Bins}),
-přičemž implicitní hodnota je 256.
+mapování hodnoty každého vstupního pixelu na hodnotu výstupní. Počet intervalů,
+na které je histogram rozdělen, je dán parametrem $N$ (v příkazové řádce TMS lze
+zadat přepínačem \texttt{-Bins}), přičemž implicitní hodnota je 256.
 
 Už dříve bylo zjištěno, že použití klasického histogramu je problematické,
-protože se může stát, že malým oblastem přiřadí moc malý výsledný rozsah.
+protože se může stát, že malým oblastem přiřadí moc malou část výsledného
+rozsahu.
 Například pokud máme čistě modrou oblohu zabírající velkou část snímku,
-nechceme, aby zabírala půlku výsledného rozsahu jasu, protože jas všech pixelů
-bude velmi podobný. Proto je nutné
-omezit počet pixelů v každém intervalu (\textit{bin}) pomocí parametru $ k $, kde
-$k/N*pixel\_count$ je maximální počet pixelů pro každý interval. S pixelama které
+nechceme, aby zabírala půlku výsledného rozsahu jasu, protože jas většiny pixelů
+oblohy bude velmi podobný. Proto je nutné
+omezit počet pixelů v každém intervalu pomocí parametru $ k $, kde
+$k/N*pixel\_count$ je maximální počet pixelů pro každý interval. S pixelama, které
 se do daného počtu nevlezou, se nic neděje, akorát pro další výpočty je počet
 pixelů v daném intervalu podhonocen. V TMS lze parametr $ k $ nastavit přepínačem
 \texttt{-Truncation} s implicitní hodnotou 5.
@@ -121,23 +122,23 @@ pixelů v daném intervalu podhonocen. V TMS lze parametr $ k $ nastavit přepí
 
 Zatímco na vstupu algoritmu se předpokládá RGB obrázek, výstup algoritmu jsou
 transformované úrovně jasu pro každý pixel. V článku bohužel není uvedeno, jak
-přesně tento výstup převést do výsledného souboru. Proto jsem zvolil to co
-považuji za standardní postup, tedy obrázek na vstupu jsem převedl do Yxy barevného
+přesně tento výstup převést do výsledného souboru. Proto jsem zvolil to, co
+považuji za standardní postup. Tedy obrázek na vstupu jsem převedl do Yxy barevného
 prostoru, nahradil jasovou složku nově vypočtenými hodnotami a výsledek uložil
-jako výsledek algoritmu. Pro transformaci do Yxy jsem využil vestavěných metod
+jako finální obrázek. Pro transformaci do Yxy jsem využil vestavěných metod
 Tone Mapping Studia.
 
 \section{Implementace a výpočetní složitost}
 
 Výpočetní složitost implementace je nízká, program projde celkem 4x
 přes všechny pixely obrázku a v každém kroku provede relativně jednoduché výpočty. 
-Počet průchodů by šel snížit, nicméně chtěl jsem nechat kód co nejpřehlednější,
+Počet průchodů by šel snížit, ale chtěl jsem nechat kód co nejpřehlednější,
 takže se každá funkce mapuje na jednu fázi algoritmu.
 
 Z hlediska optimalizací je nejzajímavější implementace vyhledávání v lookup
 tabulce, pro které jsem použil \texttt{std::upper\_bound} nad vektorem.
 Tato funkce sice pracuje s iterátory, což dělá zápis trochu komplikovanější,
-ale umožňuje nám dělat vyhledávání v LUT s \emph{log N} složistostí,
+ale umožňuje nám provádět vyhledávání v LUT s \emph{log N} složitostí,
 což je za mě klíčové, vzhledem k tomu, že se tato operace provádí pro každý
 pixel obrázku.
 
@@ -172,27 +173,27 @@ V tabulce \ref{tab:method-comp} je vidět porovnání různých metod. Zvolil js
 metody, které ve výchozím nastavení byly schopny rozumně zobrazit všechny tři
 obrázky.
 
-Jak je vidět, na všech obrázcích jsou scény krásně viditelné. V žádném případě
+Jak je vidět, na všech transformovaných obrázcích metody Khan20 jsou scény krásně viditelné. V žádném případě
 nebylo nutné jakkoliv přenastavovat výchozí parametry, což považuji za jednu z
-velkých výhod tohoto algoritmu oproti ostatním, které jsem zkoušel a musel
+velkých výhod tohoto algoritmu oproti ostatním, které jsem zkoušel, a kdy jsem musel
 parametry často upravovat.
 
 Z metod v tabulce 2 se mi subjektivně nejvíc líbí Drago03, protože tmavé části
-jsou opravdu tmavé a barvy mi taky přijdou přirozenější. Například strop kostela je 
+jsou opravdu tmavé a barvy mi přijdou přirozenější. Například strop kostela je 
 pro výstup Khan20 v hodně oranžovém odstínu. Na druhou stranu se světlejší barvy hodí pro chodbu
 druhého testovacího obrázku, kde jsou díky tomu lépe vidět detaily. Líbí se mi i
 záře kolem okna kostela, která je jednoznačně nejsvítivějším místem celé scény.
 
 \section{Závěr}
 
-V rámci projektu jsem implementoval plugin Khan20 do Tone Mapping studia a
-porovnal jeho algoritmus s ostatními metodami. Výsledky ukazují, že algoritmus
-funguje velmi dobře pro různé scény s výchozími parametry. Výstupní snímky jsou
-o něco světlejší a možná méně saturované, než bych si přál z uměleckého
-hlediska. Na druhou stranu metoda vyniká v zobrazování detailů, a to i v tmavých
-oblastech. Díky tomu jsou detaily lépe viditelné i při odlescích na monitoru
-nebo v přítomnosti silného externího osvětlení, což může být výhoda v různých
-aplikacích.
+V rámci projektu jsem implementoval plugin Khan20 do Tone Mapping Studia a
+porovnal jeho algoritmus s jinými metodami. Výsledky ukazují, že s výchozím
+nastavením dosahuje algoritmus velmi dobrých výsledků napříč různými scénami.
+Výstupní snímky jsou o něco světlejší a působí méně saturovaně, než bych
+preferoval z uměleckého hlediska. Na druhou stranu metoda vyniká v zobrazování detailů, a
+to zejména v tmavých oblastech. Díky tomu jsou snímky lépe viditelné i při
+odlescích monitoru nebo v silně osvětleném prostředí, takže v ní vidím
+potenciál pro řadu praktických aplikací.
 
 \bibliographystyle{acm}
 \bibliography{report}
